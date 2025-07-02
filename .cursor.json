@@ -25,7 +25,8 @@
     "Limit 'use client': favor server components and Next.js SSR",
     "Use 'use client' only for Web API access in small components",
     "Avoid 'use client' for data fetching or state management",
-    "Follow Next.js docs for Data Fetching, Rendering, and Routing"
+    "Follow Next.js docs for Data Fetching, Rendering, and Routing",
+    "Never run npm install or npm run dev"
   ],
   "nodeVersion": "22.17.0"
 } 
