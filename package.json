@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3005",
     "build": "next build",
     "vercel-build": "next build && cp -r public/404.html build/ && cp -r public/_redirects build/ && touch build/404.html",
     "start": "next start",
