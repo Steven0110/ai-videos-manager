@@ -13,7 +13,9 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "~public": path.resolve("./public")
+      "~public": path.resolve("./public"),
+      "@": path.resolve("./app"),
+      "@/{core}": path.resolve("./app/{core}")
     };
     return config;
   },
@@ -27,4 +29,4 @@ const nextConfig: NextConfig = {
   }),
 };
 
-export default nextConfig;
+module.exports = nextConfig;
