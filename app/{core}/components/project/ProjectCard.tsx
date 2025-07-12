@@ -31,13 +31,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       className="w-full"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3 }}
-      layout
       whileHover={{ 
         scale: 1.02,
         boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
       }}
+      transition={{ duration: 0.3 }}
     >
       <CardHeader className="flex justify-between items-center">
         <h3 className="text-xl font-semibold">{project.title}</h3>

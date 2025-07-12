@@ -47,11 +47,11 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
       createdAt: now,
       updatedAt: now,
     };
-    setProjects([...projects, newProject]);
+    setProjects((prevProjects) => [...prevProjects, newProject]);
   };
 
   const deleteProject = (id: string) => {
-    setProjects(projects.filter(project => project.id !== id));
+    setProjects((prevProjects) => prevProjects.filter(project => project.id !== id));
   };
 
   return (
