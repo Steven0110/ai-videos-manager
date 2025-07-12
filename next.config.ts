@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "~public": path.resolve("./public"),
+      "~public": path.resolve("./public")
     };
     return config;
   },
