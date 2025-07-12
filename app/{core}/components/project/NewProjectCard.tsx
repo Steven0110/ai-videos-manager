@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { Card, CardBody } from '@heroui/card';
 import NewProjectForm from './NewProjectForm';
+import { motion } from 'framer-motion';
+
+const MotionCard = motion(Card);
 
 export default function NewProjectCard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,9 +22,13 @@ export default function NewProjectCard() {
 
   return (
     <>
-      <Card 
+      <MotionCard 
         className="w-full h-full min-h-[200px] border-dashed flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
         onClick={handleOpenModal}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        whileHover={{ scale: 1.02 }}
       >
         <CardBody className="flex flex-col items-center justify-center">
           <div className="rounded-full bg-primary-100 p-3 mb-4">
@@ -44,7 +51,7 @@ export default function NewProjectCard() {
           <h3 className="text-xl font-semibold">Create New Project</h3>
           <p className="text-gray-500 text-center mt-2">Click to create a new video project</p>
         </CardBody>
-      </Card>
+      </MotionCard>
 
       <NewProjectForm 
         isOpen={isModalOpen} 

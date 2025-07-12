@@ -8,6 +8,7 @@ import {
 import { Button } from '@heroui/button';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/modal';
 import { useProjects } from '@/{core}/context/ProjectContext';
+import { motion } from 'framer-motion';
 
 interface NewProjectFormProps {
   isOpen: boolean;
@@ -40,7 +41,12 @@ export default function NewProjectForm({ isOpen, onClose }: NewProjectFormProps)
     >
       <ModalContent>
         {(onClose) => (
-          <>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
             <ModalHeader>Create New Project</ModalHeader>
             <ModalBody>
               <div className="space-y-4">
@@ -68,7 +74,7 @@ export default function NewProjectForm({ isOpen, onClose }: NewProjectFormProps)
                 Create Project
               </Button>
             </ModalFooter>
-          </>
+          </motion.div>
         )}
       </ModalContent>
     </Modal>
