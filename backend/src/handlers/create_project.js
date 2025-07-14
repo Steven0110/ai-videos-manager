@@ -1,15 +1,10 @@
 'use strict';
 
-const dbConnString = process.env.DB_CONN_STRING;
-
 module.exports.handler = async (event) => {
+  const dbConnString = process.env.DB_CONN_STRING;
+  
   return {
     statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
     body: JSON.stringify(
       {
         message: 'Hello from AI Videos Manager API: ' + dbConnString,
@@ -19,4 +14,4 @@ module.exports.handler = async (event) => {
       2
     ),
   };
-}; 
+};

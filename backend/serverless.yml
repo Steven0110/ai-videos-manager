@@ -10,10 +10,17 @@ provider:
     DB_CONN_STRING: ${ssm:/aivideosmanager/${self:provider.stage}/db_conn_string}
 
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  createProject:
+    handler: src/handlers/create_project.handler
     events:
       - http:
-          path: /
-          method: get
-          cors: true
+          path: /create-project
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+            allowCredentials: true

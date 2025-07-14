@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "open http://localhost:3005 && next dev -p 3005",
-    "vercel-build": "next build && cp -r public/404.html build/ && cp -r public/_redirects build/ && touch build/404.html",
+    "vercel-build": "next build",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix"
