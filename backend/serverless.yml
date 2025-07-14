@@ -1,0 +1,19 @@
+service: ai-videos-manager
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-west-2
+  stage: ${opt:stage, 'dev'}
+  profile: steven
+  environment:
+    DB_CONN_STRING: ${ssm:/aivideosmanager/${self:provider.stage}/db_conn_string}
+
+functions:
+  hello:
+    handler: src/handlers/hello.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true

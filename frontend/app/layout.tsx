@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AI Videos Manager",
   description: "Dashboard to edit videos as projects",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
