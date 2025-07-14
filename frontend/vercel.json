@@ -4,5 +4,6 @@
   "trailingSlash": true,
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "outputDirectory": ".next"
 } 

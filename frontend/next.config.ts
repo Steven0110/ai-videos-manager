@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  output: "standalone",
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
