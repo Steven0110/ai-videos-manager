@@ -8,6 +8,19 @@ provider:
   profile: steven
   environment:
     DB_CONN_STRING: ${ssm:/aivideosmanager/${self:provider.stage}/db_conn_string}
+    ELEVENLABS_API_KEY: ${ssm:/aivideosmanager/${self:provider.stage}/elevenlabs_api_key}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:ListBucket
+            - s3:PutObjectAcl
+          Resource:
+            - arn:aws:s3:::steven-aivideos
+            - arn:aws:s3:::steven-aivideos/*
 
 # Package configuration to include mongodb
 package:
@@ -17,6 +30,25 @@ package:
     - 'src/**'
     - 'package.json'
     - 'package-lock.json'
+
+resources:
+  Resources:
+    AudioBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: steven-aivideos
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              AllowedOrigins:
+                - '*'
 
 functions:
   createProject:
@@ -46,4 +78,12 @@ functions:
       - http:
           path: /project/{id}
           method: put
+          cors: true
+  createAudio:
+    handler: src/handlers/create_audio.handler
+    timeout: 28
+    events:
+      - http:
+          path: /project/{id}/audio
+          method: post
           cors: true

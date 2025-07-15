@@ -40,6 +40,7 @@ module.exports.handler = async (event, context) => {
                     description: { $first: '$description' },
                     script: { $first: '$script' },
                     scenes: { $push: '$scene' },
+                    audioUrl: { $first: '$audioUrl' },
                     createdAt: { $first: '$createdAt' },
                     updatedAt: { $first: '$updatedAt' },
                 }},

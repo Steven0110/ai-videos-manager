@@ -31,12 +31,21 @@ export interface Scene {
   updatedAt?: string;
 }
 
+export interface VoiceSettings {
+  speed: number;
+  stability: number;
+  similarityBoost: number;
+  style: number;
+  useSpeakerBoost: boolean;
+}
+
 export interface Project {
   id?: string;
   _id?: string; // MongoDB ID from backend
   title: string;
   description: string;
   script: string;
+  audioUrl?: string;
   scenes: Scene[];
   createdAt?: string;
   updatedAt?: string;

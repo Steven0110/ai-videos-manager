@@ -7,7 +7,6 @@
  * @returns {Object} Response object
  */
 function success(data, statusCode = 200) {
-  console.log('......success.......');
   return {
     statusCode,
     headers: {
@@ -27,7 +26,6 @@ function success(data, statusCode = 200) {
  * @returns {Object} Response object
  */
 function error(message, error, statusCode = 500) {
-  console.log('......error.......');
   console.error(`${message}:`, error);
   
   return {
@@ -39,7 +37,7 @@ function error(message, error, statusCode = 500) {
     },
     body: JSON.stringify({
       message,
-      error: error.message,
+      ...error,
     }),
   };
 }
