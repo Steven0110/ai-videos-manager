@@ -23,8 +23,27 @@ functions:
     handler: src/handlers/create_project.handler
     events:
       - http:
-          path: /create-project
+          path: /project
           method: post
           cors: true
-          # Using Lambda Proxy integration instead of Lambda integration
-          # This will pass through the status code from your Lambda response
+  getProjects:
+    handler: src/handlers/get_projects.handler
+    events:
+      - http:
+          path: /project
+          method: get
+          cors: true
+  deleteProject:
+    handler: src/handlers/delete_project.handler
+    events:
+      - http:
+          path: /project/{id}
+          method: delete
+          cors: true
+  updateProject:
+    handler: src/handlers/update_project.handler
+    events:
+      - http:
+          path: /project/{id}
+          method: put
+          cors: true

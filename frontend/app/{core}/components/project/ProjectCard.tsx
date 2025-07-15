@@ -3,11 +3,15 @@
 import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@heroui/modal';
 import { Button } from '@heroui/button';
+import { addToast } from '@heroui/toast';
 import { Project } from '@/{core}/utils/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useProjects } from '@/{core}/context/ProjectContext';
 import { PencilIcon, TrashIcon, DocumentTextIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
+import api from '@/{core}/utils/api';
 
 interface ProjectCardProps {
   project: Project;
@@ -16,17 +20,44 @@ interface ProjectCardProps {
 const MotionCard = motion(Card);
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const { deleteProject } = useProjects();
+  const { deleteProject, setStudioProject } = useProjects();
   const formattedDate = new Date(project.updatedAt || '').toLocaleDateString();
   const scenesCount = project.scenes?.length || 0;
-
+  const projectId = project._id || project.id || '';
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {isOpen: isScriptOpen, onOpen: onScriptOpen, onClose: onScriptClose} = useDisclosure();
 
-  const handleDelete = () => {
-    deleteProject(project.id || '');
-    onClose();
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    try {
+      await api.delete(`/project/${projectId}`);
+      deleteProject(projectId);
+
+      addToast({
+        title: 'Proyecto eliminado',
+        description: 'El proyecto ha sido eliminado correctamente',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Error al eliminar el proyecto',
+        color: 'danger',
+      });
+    } finally {
+      setIsDeleting(false);
+      onClose();
+    }
   };
+
+  const handleEditProject = () => {
+    setStudioProject(project);
+    router.push(`/studio`);
+  }
 
   return (
     <MotionCard 
@@ -45,7 +76,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <CardBody>
         <p className="text-gray-600 dark:text-gray-300">{project.description}</p>
         <div className="flex items-center mt-2 text-sm text-gray-500">
-          <span className="mr-4">Scenes: {scenesCount}</span>
+          <span className="mr-4">Escenas: {scenesCount}</span>
           <Button 
             size="sm" 
             variant="ghost" 
@@ -53,10 +84,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             onPress={onScriptOpen}
             startContent={<DocumentTextIcon className="w-4 h-4" />}
           >
-            View Script
+            Ver Script
           </Button>
         </div>
-        <p className="text-sm text-gray-500 mt-2">Last updated: {formattedDate}</p>
+        <p className="text-sm text-gray-500 mt-2">Última actualización: {formattedDate}</p>
       </CardBody>
       <CardFooter className="flex justify-end gap-2">
         <Button 
@@ -64,17 +95,17 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           variant="ghost"
           isIconOnly
           onPress={onOpen}
+          isLoading={isDeleting}
         >
           <TrashIcon className="w-5 h-5" />
         </Button>
-        <Link href={`/studio/${project.id}`} passHref>
-          <Button
-            isIconOnly
-            color="primary"
-          >
-            <PencilIcon className="w-5 h-5" />
-          </Button>
-        </Link>
+        <Button
+          isIconOnly
+          color="primary"
+          onPress={() => handleEditProject()}
+        >
+          <PencilIcon className="w-5 h-5" />
+        </Button>
       </CardFooter>
 
       {/* Delete Confirmation Modal */}
@@ -87,13 +118,13 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
             >
-              <ModalHeader>Delete Project</ModalHeader>
+              <ModalHeader>Eliminar Proyecto</ModalHeader>
               <ModalBody>
-                <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+                <p>¿Estás seguro de querer eliminar este proyecto? Esta acción no puede ser deshecha.</p>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" onPress={handleDelete}>Delete</Button>
-                <Button onPress={onClose}>Cancel</Button>
+                <Button color="danger" onPress={handleDelete} isLoading={isDeleting}>Eliminar</Button>
+                <Button onPress={onClose}>Cancelar</Button>
               </ModalFooter>
             </motion.div>
           )}
@@ -110,17 +141,17 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
             >
-              <ModalHeader>Script</ModalHeader>
+              <ModalHeader>Script del Proyecto</ModalHeader>
               <ModalBody>
                 <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md">
                   <pre className="whitespace-pre-wrap font-mono text-sm">{project.script}</pre>
                 </div>
                 <div className="mt-4">
-                  <h4 className="font-medium mb-2">Scenes ({scenesCount})</h4>
+                  <h4 className="font-medium mb-2">Escenas ({scenesCount})</h4>
                   <div className="space-y-3">
                     {project.scenes?.map((scene, index) => (
-                      <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-md p-3">
-                        <p className="font-medium">Scene {index + 1}</p>
+                      <div key={scene._id || index} className="border border-gray-200 dark:border-gray-700 rounded-md p-3">
+                        <p className="font-medium">Escena {index + 1}</p>
                         <p className="text-sm mt-1">{scene.text}</p>
                       </div>
                     ))}
@@ -128,7 +159,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button onPress={onScriptClose}>Close</Button>
+                <Button onPress={onScriptClose}>Cerrar</Button>
               </ModalFooter>
             </motion.div>
           )}

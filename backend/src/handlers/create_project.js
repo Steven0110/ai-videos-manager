@@ -1,5 +1,6 @@
 'use strict';
 
+const { MongoClient, ObjectId } = require('mongodb');
 const { withDatabase } = require('../utils/database');
 const { success, error } = require('../utils/response');
 
@@ -37,7 +38,7 @@ module.exports.handler = async (event, context) => {
     
     validateProject(projectData);
     
-    const projectId = await withDatabase(async (db) => {
+    const createdProject = await withDatabase(async (db) => {
       const project = {
         title: projectData.title,
         description: projectData.description,
@@ -48,10 +49,11 @@ module.exports.handler = async (event, context) => {
       }
 
       const projectResult = await db.collection('projects').insertOne(project);
+      const projectId = projectResult.insertedId;
 
       for (let i = 0; i < projectData.scenes.length; i++) {
         const scene = {
-          projectId: projectResult.insertedId,
+          projectId: projectId,
           index: i,
           text: projectData.scenes[i].text,
           createdAt: new Date(),
@@ -69,7 +71,7 @@ module.exports.handler = async (event, context) => {
           updatedAt: new Date(),
         }
 
-        const imageResult = await db.collection('images').insertOne(image);
+        await db.collection('images').insertOne(image);
 
         const video = {
           sceneId: sceneResult.insertedId,
@@ -80,15 +82,54 @@ module.exports.handler = async (event, context) => {
           updatedAt: new Date(),
         }
 
-        const videoResult = await db.collection('videos').insertOne(video);
+        await db.collection('videos').insertOne(video);
       }
 
-      return projectResult.insertedId;
+      // Fetch the complete project with scenes, images, and videos
+      const completeProject = await db
+        .collection('projects')
+        .aggregate([
+          { $match: { _id: projectId } },
+          { $lookup: {
+              from: 'scenes',
+              localField: '_id',
+              foreignField: 'projectId',
+              as: 'scene'
+          }},
+          { $unwind: '$scene' },
+          { $lookup: {
+              from: 'images',
+              localField: 'scene._id',
+              foreignField: 'sceneId',
+              as: 'scene.image'
+          }},
+          { $unwind: '$scene.image' },
+          { $lookup: {
+              from: 'videos',
+              localField: 'scene._id',
+              foreignField: 'sceneId',
+              as: 'scene.video'
+          }},
+          { $unwind: '$scene.video' },
+          { $sort: { 'scene.index': 1 } },
+          { $group: {
+              _id: '$_id',
+              title: { $first: '$title' },
+              description: { $first: '$description' },
+              script: { $first: '$script' },
+              scenes: { $push: '$scene' },
+              createdAt: { $first: '$createdAt' },
+              updatedAt: { $first: '$updatedAt' },
+          }}
+        ])
+        .toArray();
+
+      return completeProject[0];
     });
     
     return success({
       message: 'Project created successfully',
-      projectId: projectId,
+      project: createdProject,
     }, 201);
   } catch (err) {
     return error('Error creating project', err.message);

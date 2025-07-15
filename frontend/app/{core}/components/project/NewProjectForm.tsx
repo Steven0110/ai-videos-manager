@@ -62,22 +62,13 @@ export default function NewProjectForm({ isOpen, onClose }: NewProjectFormProps)
           }
         }
 
-        const response = await api.post('/create-project', {
+        const { data } = await api.post('/project', {
           project: projectData,
         });
 
-        if (response.data.error) {
-          setError(response.data.error);
-          return;
+        if (data.project) {
+          addProject(data.project);
         }
-
-        // Add the project to the context
-        // addProject({
-        //   title: projectData.title,
-        //   description: projectData.description,
-        //   script: projectData.script,
-        //   scenes: projectData.scenes,
-        // });
         
         onClose();
       } catch (error: any) {
