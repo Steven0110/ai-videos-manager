@@ -1,7 +1,7 @@
 import { Textarea, Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { NumberInput } from "@heroui/number-input";
-import { PlayIcon } from "@heroicons/react/24/solid";
+import { PlayIcon, ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import { useProjects } from '@/{core}/context/ProjectContext';
@@ -119,16 +119,18 @@ export default function ScriptEditor({ projectId, audioUrl, script: initialScrip
                                     <Button
                                         className="w-full"
                                         color="primary"
+                                        endContent={<ArrowDownTrayIcon className="w-4 h-4" />}
                                         onPress={() => {
                                             const a = document.createElement('a');
                                             a.href = audioUrl;
+                                            a.target = '_blank';
                                             a.download = 'audio.mp3';
                                             document.body.appendChild(a);
                                             a.click();
                                             document.body.removeChild(a);
                                         }}
                                     >
-                                        Descargar        
+                                        Descargar
                                     </Button>
                                 </div>
                             </PopoverTrigger>

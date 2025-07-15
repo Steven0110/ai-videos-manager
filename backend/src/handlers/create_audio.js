@@ -59,7 +59,7 @@ module.exports.handler = async (event, context) => {
             Bucket: BUCKET_NAME,
             Key: `audio/${filename}`,
             Body: audioBuffer,
-            ContentType: 'audio/mpeg',
+            //ContentType: 'audio/mpeg',
             ACL: 'public-read'
         };
 

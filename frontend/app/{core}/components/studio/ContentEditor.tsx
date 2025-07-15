@@ -4,6 +4,7 @@ import { Button } from '@heroui/button';
 import { Project } from '@/{core}/utils/types';
 import ScriptEditor from './ScriptEditor';
 import { CheckIcon } from '@heroicons/react/24/solid';
+import ScenesEditor from './ScenesEditor';
 
 interface ContentEditorProps {
     project: Project;
@@ -40,13 +41,13 @@ export default function ContentEditor({ project, onUpdate }: ContentEditorProps)
                 className={`overflow-hidden ${activeSection === 'script' ? 'border-primary-500 shadow-md' : 'border-primary-500 border-opacity-50 shadow-sm'}`}
             >
                 <CardHeader 
-                    className="cursor-pointer bg-warning-300 text-white"
+                    className={`cursor-pointer text-white ${project.audioUrl ? 'bg-success-300' : 'bg-warning-300'}`}
                     onClick={() => toggleSection('script')}
                 >
                     <div className="flex justify-between items-center w-full">
                         <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-medium">Script</h3>
-                            {/* <CheckIcon className="w-5 h-5" /> */}
+                            <h3 className="text-lg font-medium">Guión</h3>
+                            {project.audioUrl && <CheckIcon className="w-5 h-5" />}
                         </div>
                         <Button 
                             isIconOnly 
@@ -78,7 +79,7 @@ export default function ContentEditor({ project, onUpdate }: ContentEditorProps)
                     onClick={() => toggleSection('images')}
                 >
                     <div className="flex justify-between items-center w-full">
-                        <h3 className="text-lg font-medium">Images</h3>
+                        <h3 className="text-lg font-medium">Imágenes</h3>
                         <Button 
                             isIconOnly 
                             variant="light" 
@@ -90,7 +91,7 @@ export default function ContentEditor({ project, onUpdate }: ContentEditorProps)
                 </CardHeader>
                 {activeSection === 'images' && (
                     <CardBody>
-                        Photos
+                        <ScenesEditor project={project} />
                     </CardBody>
                 )}
             </Card>
