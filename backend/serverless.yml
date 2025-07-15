@@ -9,6 +9,15 @@ provider:
   environment:
     DB_CONN_STRING: ${ssm:/aivideosmanager/${self:provider.stage}/db_conn_string}
 
+# Package configuration to include mongodb
+package:
+  patterns:
+    - '!node_modules/.bin/**'
+    - 'node_modules/**'
+    - 'src/**'
+    - 'package.json'
+    - 'package-lock.json'
+
 functions:
   createProject:
     handler: src/handlers/create_project.handler
@@ -16,11 +25,6 @@ functions:
       - http:
           path: /create-project
           method: post
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-            allowCredentials: true
+          cors: true
+          # Using Lambda Proxy integration instead of Lambda integration
+          # This will pass through the status code from your Lambda response

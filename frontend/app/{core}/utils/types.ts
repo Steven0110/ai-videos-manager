@@ -1,7 +1,15 @@
+export interface Scene {
+  text: string;
+  imagePrompt: string;
+  videoPrompt: string;
+}
+
 export interface Project {
-  id: string;
+  id?: string;
   title: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  script: string;
+  scenes: Scene[];
+  createdAt?: string;
+  updatedAt?: string;
 } 

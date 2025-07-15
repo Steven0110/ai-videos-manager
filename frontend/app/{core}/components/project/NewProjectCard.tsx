@@ -51,8 +51,8 @@ export default function NewProjectCard() {
                 <path d="M12 5v14"></path>
               </svg>
             </div>
-            <h3 className="text-xl font-semibold">Create New Project</h3>
-            <p className="text-gray-500 text-center mt-2">Click to create a new video project</p>
+            <h3 className="text-xl font-semibold">Crear Nuevo Proyecto</h3>
+            <p className="text-gray-500 text-center mt-2">Haz click para crear un nuevo proyecto de video</p>
           </CardBody>
         </div>
       </MotionCard>
