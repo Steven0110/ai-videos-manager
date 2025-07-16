@@ -65,7 +65,7 @@ export default function ProjectStudio() {
   if (!localProject) {
     return (
       <AppLayout>
-        <div className="container mx-auto">
+        <div className="container p-6">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold">Proyecto no encontrado</h1>
           </div>
@@ -79,7 +79,7 @@ export default function ProjectStudio() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto">        
+      <div className="container mx-auto p-6">        
         <div className="flex flex-col space-y-6">
           <Card>
             <CardBody>
