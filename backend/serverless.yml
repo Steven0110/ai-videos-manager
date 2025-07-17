@@ -9,6 +9,8 @@ provider:
   environment:
     DB_CONN_STRING: ${ssm:/aivideosmanager/${self:provider.stage}/db_conn_string}
     ELEVENLABS_API_KEY: ${ssm:/aivideosmanager/${self:provider.stage}/elevenlabs_api_key}
+    LEONARDO_API_KEY: ${ssm:/aivideosmanager/${self:provider.stage}/leonardo_api_key}
+    LEONARDO_API_URL: https://cloud.leonardo.ai/api/rest/v1
   iam:
     role:
       statements:
@@ -58,6 +60,13 @@ functions:
           path: /project
           method: post
           cors: true
+  getProject:
+    handler: src/handlers/get_project.handler
+    events:
+      - http:
+          path: /project/{id}
+          method: get
+          cors: true
   getProjects:
     handler: src/handlers/get_projects.handler
     events:
@@ -86,4 +95,26 @@ functions:
       - http:
           path: /project/{id}/audio
           method: post
+          cors: true
+  createImages:
+    handler: src/handlers/create_images.handler
+    events:
+      - http:
+          path: /project/{id}/images
+          method: post
+          cors: true
+  leonardoWebhook:
+    handler: src/handlers/leonardo_webhook.handler
+    events:
+      - http:
+          path: /leonardo/webhook
+          method: post
+          cors: true
+  downloadProject:
+    handler: src/handlers/download_project.handler
+    timeout: 30
+    events:
+      - http:
+          path: /project/{id}/download
+          method: get
           cors: true

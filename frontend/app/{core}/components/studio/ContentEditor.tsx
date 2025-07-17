@@ -4,7 +4,7 @@ import { Button } from '@heroui/button';
 import { Project } from '@/{core}/utils/types';
 import ScriptEditor from './ScriptEditor';
 import { CheckIcon } from '@heroicons/react/24/solid';
-import ScenesEditor from './ScenesEditor';
+import ImagesEditor from './ImagesEditor';
 
 interface ContentEditorProps {
     project: Project;
@@ -91,7 +91,10 @@ export default function ContentEditor({ project, onUpdate }: ContentEditorProps)
                 </CardHeader>
                 {activeSection === 'images' && (
                     <CardBody>
-                        <ScenesEditor project={project} />
+                        <ImagesEditor
+                            projectId={project._id || ''}
+                            scenes={project.scenes}
+                        />
                     </CardBody>
                 )}
             </Card>

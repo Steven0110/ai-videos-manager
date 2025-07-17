@@ -3,6 +3,7 @@
 const { ObjectId } = require('mongodb');
 const { withDatabase } = require('../utils/database');
 const { success, error } = require('../utils/response');
+const { getProjectById } = require('../utils/projects');
 
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
@@ -47,45 +48,7 @@ module.exports.handler = async (event, context) => {
             }
             
             // Fetch the updated project with scenes, images, and videos
-            const updatedProject = await db
-                .collection('projects')
-                .aggregate([
-                    { $match: { _id: objectId } },
-                    { $lookup: {
-                        from: 'scenes',
-                        localField: '_id',
-                        foreignField: 'projectId',
-                        as: 'scene'
-                    }},
-                    { $unwind: '$scene' },
-                    { $lookup: {
-                        from: 'images',
-                        localField: 'scene._id',
-                        foreignField: 'sceneId',
-                        as: 'scene.image'
-                    }},
-                    { $unwind: '$scene.image' },
-                    { $lookup: {
-                        from: 'videos',
-                        localField: 'scene._id',
-                        foreignField: 'sceneId',
-                        as: 'scene.video'
-                    }},
-                    { $unwind: '$scene.video' },
-                    { $sort: { 'scene.index': 1 } },
-                    { $group: {
-                        _id: '$_id',
-                        title: { $first: '$title' },
-                        description: { $first: '$description' },
-                        script: { $first: '$script' },
-                        scenes: { $push: '$scene' },
-                        createdAt: { $first: '$createdAt' },
-                        updatedAt: { $first: '$updatedAt' },
-                    }}
-                ])
-                .toArray();
-            
-            return updatedProject[0];
+            return await getProjectById(db, objectId);
         });
         
         return success({

@@ -114,20 +114,6 @@ export default function ProjectStudio() {
                   });
                 }} 
               />
-
-              {/* <Textarea
-                value={localProject.script}
-                labelPlacement='outside'
-                placeholder='Escribe el script del proyecto'
-                label='Script'
-                isRequired
-                onChange={(e) => {
-                  setLocalProject({
-                    ...localProject,
-                    script: e.target.value,
-                  });
-                }}
-              /> */}
             
             </CardBody>
             <CardFooter className="flex justify-end">

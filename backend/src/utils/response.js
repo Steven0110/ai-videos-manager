@@ -26,7 +26,7 @@ function success(data, statusCode = 200) {
  * @returns {Object} Response object
  */
 function error(message, error, statusCode = 500) {
-  console.error(`${message}:`, error);
+  console.error(`${message}:`, JSON.stringify(error));
   
   return {
     statusCode,
@@ -36,8 +36,8 @@ function error(message, error, statusCode = 500) {
       'Access-Control-Allow-Credentials': true,
     },
     body: JSON.stringify({
-      message,
-      ...error,
+      message: message,
+      error: error,
     }),
   };
 }

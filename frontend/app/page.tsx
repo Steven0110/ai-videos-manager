@@ -17,20 +17,22 @@ export default function Dashboard() {
 
   // Fetch projects on component mount
   useEffect(() => {
-    setIsFetching(true);
-    
-    api.get('/project')
-      .then(({data: projects}) => {
-        if (projects && projects.length > 0) {
-          setProjects(projects);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching projects:", error);
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
+    if(!isFetching) {
+      setIsFetching(true);
+      api.get('/project')
+        .then(({data: projects}) => {
+          if (projects && projects.length > 0) {
+            setProjects(projects);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching projects:", error);
+        })
+        .finally(() => {
+          setIsFetching(false);
+        });
+        
+    }
   }, [setProjects]);
 
   // Update grid items whenever projects change

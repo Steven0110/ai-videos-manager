@@ -8,7 +8,7 @@ alwaysApply: true
 - Prefer iteration and modularization over code duplication,
 - Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError),
 - Structure files: exported component, subcomponents, helpers, static content, types,
-- Use English for coding, but for UI texts use Spanish.
+- Written code (variable names, function names, types, etc.) must be in English only. However, all user-facing text displayed in the UI (headings, labels, buttons, error messages, etc.) must be in Spanish since the end users are Spanish speakers.
 - Use lowercase with dashes for directories (e.g., components/auth-wizard),
 - Favor named exports for components,
 - Use TypeScript for all code; prefer interfaces over types,

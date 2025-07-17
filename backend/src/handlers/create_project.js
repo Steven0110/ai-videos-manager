@@ -3,6 +3,7 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const { withDatabase } = require('../utils/database');
 const { success, error } = require('../utils/response');
+const { getProjectById } = require('../utils/projects');
 
 const validateProject = (project) => {
   // Required fields
@@ -56,75 +57,19 @@ module.exports.handler = async (event, context) => {
           projectId: projectId,
           index: i,
           text: projectData.scenes[i].text,
+          imagePrompt: projectData.scenes[i].imagePrompt,
+          videoPrompt: projectData.scenes[i].videoPrompt,
+          imageGenerationStatus: 'pending',
+          videoGenerationStatus: 'pending',
           createdAt: new Date(),
           updatedAt: new Date(),
         }
 
         const sceneResult = await db.collection('scenes').insertOne(scene);
-
-        const image = {
-          sceneId: sceneResult.insertedId,
-          prompt: projectData.scenes[i].imagePrompt,
-          status: 'pending',
-          url: '',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-
-        await db.collection('images').insertOne(image);
-
-        const video = {
-          sceneId: sceneResult.insertedId,
-          prompt: projectData.scenes[i].videoPrompt,
-          status: 'pending',
-          url: '',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-
-        await db.collection('videos').insertOne(video);
       }
 
       // Fetch the complete project with scenes, images, and videos
-      const completeProject = await db
-        .collection('projects')
-        .aggregate([
-          { $match: { _id: projectId } },
-          { $lookup: {
-              from: 'scenes',
-              localField: '_id',
-              foreignField: 'projectId',
-              as: 'scene'
-          }},
-          { $unwind: '$scene' },
-          { $lookup: {
-              from: 'images',
-              localField: 'scene._id',
-              foreignField: 'sceneId',
-              as: 'scene.image'
-          }},
-          { $unwind: '$scene.image' },
-          { $lookup: {
-              from: 'videos',
-              localField: 'scene._id',
-              foreignField: 'sceneId',
-              as: 'scene.video'
-          }},
-          { $unwind: '$scene.video' },
-          { $sort: { 'scene.index': 1 } },
-          { $group: {
-              _id: '$_id',
-              title: { $first: '$title' },
-              description: { $first: '$description' },
-              script: { $first: '$script' },
-              scenes: { $push: '$scene' },
-              createdAt: { $first: '$createdAt' },
-              updatedAt: { $first: '$updatedAt' },
-          }}
-        ])
-        .toArray();
-
-      return completeProject[0];
+      return await getProjectById(db, projectId);
     });
     
     return success({

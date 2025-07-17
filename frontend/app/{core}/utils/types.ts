@@ -1,11 +1,9 @@
 export interface Image {
   _id?: string;
   sceneId?: string;
-  prompt: string;
-  status: string;
+  id?: string;
   url: string;
   createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface Video {
@@ -25,8 +23,10 @@ export interface Scene {
   text: string;
   imagePrompt?: string;
   videoPrompt?: string;
-  image?: Image;
-  video?: Video;
+  imageGenerationStatus: string;
+  videoGenerationStatus: string;
+  images: Image[];
+  videos: Video[];
   createdAt?: string;
   updatedAt?: string;
 }

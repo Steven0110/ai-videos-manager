@@ -3,6 +3,7 @@
 const { ObjectId } = require('mongodb');
 const { withDatabase } = require('../utils/database');
 const { success, error } = require('../utils/response');
+const { getProjectById } = require('../utils/projects');
 const { ElevenLabsClient } = require('@elevenlabs/elevenlabs-js');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
@@ -81,44 +82,7 @@ module.exports.handler = async (event, context) => {
             );
             
             // Then fetch the complete updated project with scenes, images, and videos
-            const result = await db
-                .collection('projects')
-                .aggregate([
-                    { $match: { _id: ObjectId.createFromHexString(projectId) } },
-                    { $lookup: {
-                        from: 'scenes',
-                        localField: '_id',
-                        foreignField: 'projectId',
-                        as: 'scenes'
-                    }},
-                    { $lookup: {
-                        from: 'images',
-                        localField: 'scenes._id',
-                        foreignField: 'sceneId',
-                        as: 'images'
-                    }},
-                    { $lookup: {
-                        from: 'videos',
-                        localField: 'scenes._id',
-                        foreignField: 'sceneId',
-                        as: 'videos'
-                    }},
-                    { $project: {
-                        _id: 1,
-                        title: 1,
-                        description: 1,
-                        script: 1,
-                        audioUrl: 1,
-                        scenes: 1,
-                        images: 1,
-                        videos: 1,
-                        createdAt: 1,
-                        updatedAt: 1
-                    }}
-                ])
-                .toArray();
-            
-            return result[0];
+            return await getProjectById(db, projectId);
         });
 
         return success({

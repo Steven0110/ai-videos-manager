@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useProjects } from '@/{core}/context/ProjectContext';
-import { PencilIcon, TrashIcon, DocumentTextIcon } from '@heroicons/react/24/solid';
+import { PencilIcon, TrashIcon, DocumentTextIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
-import api from '@/{core}/utils/api';
+import api, { downloadProject } from '@/{core}/utils/api';
 
 interface ProjectCardProps {
   project: Project;
@@ -25,6 +25,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const scenesCount = project.scenes?.length || 0;
   const projectId = project._id || project.id || '';
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const router = useRouter();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const {isOpen: isScriptOpen, onOpen: onScriptOpen, onClose: onScriptClose} = useDisclosure();
@@ -57,6 +58,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const handleEditProject = () => {
     setStudioProject(project);
     router.push(`/studio`);
+  }
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const zipUrl = await downloadProject(projectId);
+      window.open(zipUrl, '_blank');
+      
+      addToast({
+        title: 'Descarga iniciada',
+        description: 'Los archivos del proyecto se están descargando',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Error downloading project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Error al descargar los archivos del proyecto',
+        color: 'danger',
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   }
 
   return (
@@ -98,6 +122,15 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           isLoading={isDeleting}
         >
           <TrashIcon className="w-5 h-5" />
+        </Button>
+        <Button
+          isIconOnly
+          color="secondary"
+          variant="ghost"
+          onPress={handleDownload}
+          isLoading={isDownloading}
+        >
+          <ArrowDownTrayIcon className="w-5 h-5" />
         </Button>
         <Button
           isIconOnly
