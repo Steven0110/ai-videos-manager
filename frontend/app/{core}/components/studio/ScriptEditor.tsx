@@ -75,15 +75,14 @@ export default function ScriptEditor({
     const handleRegenerateAudio = async (): Promise<void> => {
         setIsGeneratingAudio(true);
         try {
-            // const response = await api.post(
-            //     `/project/${projectId}/audio`,
-            //     {
-            //         script: script,
-            //         voiceSettings: voiceSettings
-            //     }
-            // );
-            // setStudioProject(response.data.project);
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await api.post(
+                `/project/${projectId}/audio`,
+                {
+                    script: script,
+                    voiceSettings: voiceSettings
+                }
+            );
+            setStudioProject(response.data.project);
             setIsGeneratingAudio(false);
             setIsVoiceSettingsOpen(false);
             addToast({
@@ -197,7 +196,7 @@ export default function ScriptEditor({
                     onPress={handleRegenerateAudio}
                     isLoading={isGeneratingAudio}
                 >
-                    Generate
+                    Generar audio
                 </Button>
             </div>
         </div>
@@ -221,7 +220,7 @@ export default function ScriptEditor({
                             className="w-full"
                             endContent={<ArrowPathIcon className="w-4 h-4" />}
                         >
-                            Regenerate audio
+                            Generar audio
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent>
@@ -235,7 +234,7 @@ export default function ScriptEditor({
                     endContent={<ArrowDownTrayIcon className="w-4 h-4" />}
                     onPress={handleDownloadAudio}
                 >
-                    Download
+                    Descargar audio
                 </Button>
             </div>
         </div>
@@ -265,7 +264,7 @@ export default function ScriptEditor({
                     isLoading={isGeneratingAudio}
                     onPress={handleGenerateAudio}
                 >
-                    Generate audio
+                    Generar audio
                 </Button>
             )}
         </div>

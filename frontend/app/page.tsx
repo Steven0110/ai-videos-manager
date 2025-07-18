@@ -9,6 +9,7 @@ import NewProjectCard from "./{core}/components/project/NewProjectCard";
 import CardLoader from "./{core}/components/loader/CardLoader";
 import api from "./{core}/utils/api";
 import { Project } from "./{core}/utils/types";
+import { addToast } from "@heroui/toast";
 
 export default function Dashboard() {
   const { projects, setProjects } = useProjects();
@@ -27,6 +28,13 @@ export default function Dashboard() {
         })
         .catch((error) => {
           console.error("Error fetching projects:", error);
+          if(error.response.status === 403) {
+            addToast({
+              title: "Error",
+              description: error.response.data.message,
+              color: "danger",
+            });
+          }
         })
         .finally(() => {
           setIsFetching(false);

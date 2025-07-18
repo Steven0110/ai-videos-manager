@@ -8,6 +8,13 @@ const { getProjectById } = require('../utils/projects');
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     
+    const headers = event.headers;
+    const apiKey = headers['x-api-key'];
+
+    if(apiKey !== process.env.API_KEY) {
+        return error('API key inválida', 'API key inválida', 403);
+    }
+    
     try {
         const projectId = event.pathParameters.id;
         const updateData = JSON.parse(event.body);
@@ -26,7 +33,15 @@ module.exports.handler = async (event, context) => {
             
             // Prepare update object with only allowed fields
             const updateFields = {};
-            const allowedFields = ['title', 'description', 'script'];
+            const allowedFields = [
+                'title', 
+                'description', 
+                'script', 
+                'facebookDescription',
+                'instagramDescription',
+                'tiktokDescription',
+                'youtubeDescription'
+            ];
             
             for (const field of allowedFields) {
                 if (updateData[field] !== undefined) {

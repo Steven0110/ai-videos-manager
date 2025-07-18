@@ -29,3 +29,12 @@
     font-family: Arial, Helvetica, sans-serif;
   }
   
+@layer components {
+  .bg-success-gradient {
+    background: linear-gradient(90deg, rgba(6, 117, 54, 1) 0%, rgba(12, 130, 57, 1) 57%, rgba(18, 161, 80, 1) 100%);
+  }
+  .bg-warning-gradient {
+    background: linear-gradient(90deg,rgba(201, 128, 24, 1) 0%, rgba(255, 193, 7, 1) 57%, rgba(255, 214, 92, 1) 100%);
+  }
+}
+  

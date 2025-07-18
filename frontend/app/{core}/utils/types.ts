@@ -46,6 +46,10 @@ export interface Project {
   description: string;
   script: string;
   audioUrl?: string;
+  facebookDescription?: string;
+  instagramDescription?: string;
+  tiktokDescription?: string;
+  youtubeDescription?: string;
   scenes: Scene[];
   createdAt?: string;
   updatedAt?: string;

@@ -10,12 +10,15 @@ import { Card, CardBody, CardFooter } from '@heroui/card';
 import { Button } from '@heroui/button';
 import { addToast } from '@heroui/toast';
 import api from '@/{core}/utils/api';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ContentEditor from '@/{core}/components/studio/ContentEditor';
+import { downloadProject } from '@/{core}/utils/api';
 
 export default function ProjectStudio() {
   const params = useParams();
   const { studioProject, setStudioProject } = useProjects();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [localProject, setLocalProject] = useState<Project>({
     title: '',
     description: '',
@@ -55,6 +58,32 @@ export default function ProjectStudio() {
     }
   };
 
+
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const zipUrl = await downloadProject(studioProject?._id || '');
+      window.open(zipUrl, '_blank');
+      
+      addToast({
+        title: 'Descarga iniciada',
+        description: 'Los archivos del proyecto se están descargando',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Error downloading project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Error al descargar los archivos del proyecto',
+        color: 'danger',
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
+
   useEffect(() => {
     if (studioProject) {
       // Initialize local state from studioProject when it changes
@@ -62,7 +91,7 @@ export default function ProjectStudio() {
     }
   }, [studioProject]);
 
-  if (!localProject) {
+  if (!localProject || !studioProject) {
     return (
       <AppLayout>
         <div className="container p-6">
@@ -83,8 +112,18 @@ export default function ProjectStudio() {
         <div className="flex flex-col space-y-6">
           <Card>
             <CardBody>
-              <h2 className="text-xl font-medium mb-2">Detalles del proyecto</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">{localProject.description}</p>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-medium mb-2">Detalles del proyecto</h2>
+                <Button 
+                  variant="flat" 
+                  color="primary" 
+                  onPress={handleDownload}
+                  isLoading={isDownloading}
+                  endContent={<ArrowDownTrayIcon className="w-5 h-5" />}
+                  >
+                  Descargar
+                </Button>
+              </div>
               
               <Input 
                 className="mb-4" 

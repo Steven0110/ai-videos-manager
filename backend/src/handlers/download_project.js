@@ -17,6 +17,13 @@ const pipeline = promisify(stream.pipeline);
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     
+    const headers = event.headers;
+    const apiKey = headers['x-api-key'];
+
+    if(apiKey !== process.env.API_KEY) {
+        return error('API key inválida', 'API key inválida', 403);
+    }
+    
     const projectId = event.pathParameters.id;
     
     if (!projectId) {

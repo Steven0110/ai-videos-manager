@@ -95,13 +95,18 @@ export default function ImagesEditor({ projectId, scenes: initialScenes }: Image
             setIsGenerateAllModalOpen(false);
             setIsGeneratingAll(true);
             
-            // Set all scenes to loading state
-            const allSceneIndices = Array.from({ length: scenes.length }, (_, i) => i);
-            setLoadingScenes(new Set(allSceneIndices));
+            // Get all pending scenes
+            const pendingScenes = scenes.filter((scene) => scene.imageGenerationStatus === 'pending');
             
-            const scenesToGenerate = [
-                ...scenes.filter((scene) => scene.imageGenerationStatus === 'pending')
-            ];
+            // Take only the first 10 pending scenes
+            const scenesToGenerate = pendingScenes.slice(0, 10);
+            
+            // Set only the selected scenes to loading state
+            const sceneIndices = scenesToGenerate.map((scene) => 
+                scenes.findIndex((s) => s === scene)
+            ).filter((index) => index !== -1);
+            
+            setLoadingScenes(new Set(sceneIndices));
             
             const response = await api.post(`/project/${projectId}/images`, {
                 scenes: scenesToGenerate,
@@ -110,6 +115,22 @@ export default function ImagesEditor({ projectId, scenes: initialScenes }: Image
             setStudioProject(response.data.project);
             // Update the local scenes state with the updated scenes from the response
             setScenes(response.data.project.scenes);
+            
+            // Show appropriate message based on remaining scenes
+            const remainingScenes = pendingScenes.length - scenesToGenerate.length;
+            if (remainingScenes > 0) {
+                addToast({
+                    title: "Generación parcial completada",
+                    description: `Se han enviado ${scenesToGenerate.length} escenas para generación. Quedan ${remainingScenes} escenas pendientes.`,
+                    color: "success",
+                });
+            } else {
+                addToast({
+                    title: "Generación completada",
+                    description: "Todas las escenas han sido enviadas para generación de imágenes.",
+                    color: "success",
+                });
+            }
             
         } catch (error: any) {
             console.error("Error generating all images:", error);

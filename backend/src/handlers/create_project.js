@@ -28,11 +28,20 @@ const validateProject = (project) => {
     }
   }
 
+  // Social media descriptions are optional, no validation needed
+
   return true;
 };
 
 module.exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
+
+  const headers = event.headers;
+  const apiKey = headers['x-api-key'];
+
+  if(apiKey !== process.env.API_KEY) {
+    return error('API key inválida', 'API key inválida', 403);
+  }
 
   try {
     const projectData = JSON.parse(event.body).project;
@@ -45,6 +54,10 @@ module.exports.handler = async (event, context) => {
         description: projectData.description,
         raw: projectData,
         script: projectData.script,
+        facebookDescription: projectData.facebookDescription || '',
+        instagramDescription: projectData.instagramDescription || '',
+        tiktokDescription: projectData.tiktokDescription || '',
+        youtubeDescription: projectData.youtubeDescription || '',
         createdAt: new Date(),
         updatedAt: new Date(),
       }

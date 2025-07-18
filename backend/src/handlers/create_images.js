@@ -24,6 +24,13 @@ const leonardoApi = axios.create({
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
+    const headers = event.headers;
+    const apiKey = headers['x-api-key'];
+
+    if(apiKey !== process.env.API_KEY) {
+        return error('API key inválida', 'API key inválida', 403);
+    }
+
     const projectId = event.pathParameters.id;
     const scenes = JSON.parse(event.body).scenes;
 
@@ -50,11 +57,11 @@ module.exports.handler = async (event, context) => {
 
                 // Generate images with Leonardo.AI API
                 const response = await leonardoApi.post(`/generations`, {
-                    modelId: fluxSchnellModelId,
+                    modelId: lucidRealismModelId,
                     contrast: 3.5,
                     presetStyle: 'DYNAMIC',
                     prompt: scene.imagePrompt,
-                    num_images: 1, //2,
+                    num_images: 2,
                     width: 664,
                     height: 1184,
                     enhancePrompt: false,
@@ -102,5 +109,4 @@ module.exports.handler = async (event, context) => {
     } catch (err) {
         return error(err.message || 'Error creating image/s', err);
     }
-    
 }

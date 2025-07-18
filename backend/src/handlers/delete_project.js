@@ -7,6 +7,13 @@ const { success, error } = require('../utils/response');
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     
+    const headers = event.headers;
+    const apiKey = headers['x-api-key'];
+
+    if(apiKey !== process.env.API_KEY) {
+        return error('API key inválida', 'API key inválida', 403);
+    }
+    
     try {
         const projectId = event.pathParameters.id;
         

@@ -11,6 +11,7 @@ provider:
     ELEVENLABS_API_KEY: ${ssm:/aivideosmanager/${self:provider.stage}/elevenlabs_api_key}
     LEONARDO_API_KEY: ${ssm:/aivideosmanager/${self:provider.stage}/leonardo_api_key}
     LEONARDO_API_URL: https://cloud.leonardo.ai/api/rest/v1
+    API_KEY: DbtvmtpYQijbfWeXM5cYRHHt7uMSdR6aDRoOs20T1JOM
   iam:
     role:
       statements:
@@ -98,6 +99,7 @@ functions:
           cors: true
   createImages:
     handler: src/handlers/create_images.handler
+    timeout: 29
     events:
       - http:
           path: /project/{id}/images

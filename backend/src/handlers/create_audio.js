@@ -17,6 +17,13 @@ const elevenLabs = new ElevenLabsClient({
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
+    const headers = event.headers;
+    const apiKey = headers['x-api-key'];
+
+    if(apiKey !== process.env.API_KEY) {
+        return error('API key inválida', 'API key inválida', 403);
+    }
+
     const projectId = event.pathParameters.id;
     const script = JSON.parse(event.body).script;
     const voiceSettings = JSON.parse(event.body).voiceSettings;
@@ -25,7 +32,7 @@ module.exports.handler = async (event, context) => {
         return error('Missing project ID', 'Project ID is required', 400);
     }
 
-    if(!script) {
+    if (!script) {
         return error('Missing script', 'Script is required', 400);
     }
 
@@ -36,11 +43,11 @@ module.exports.handler = async (event, context) => {
             text: script,
             modelId: "eleven_multilingual_v2",
             voiceSettings: {
-                speed: voiceSettings.speed || 0.75,
-                stability: voiceSettings.stability || 0.3,
-                similarityBoost: voiceSettings.similarityBoost || 0.75,
-                style: voiceSettings.style || 0.9,
-                useSpeakerBoost: voiceSettings.useSpeakerBoost || true
+                speed: voiceSettings?.speed || 0.75,
+                stability: voiceSettings?.stability || 0.3,
+                similarityBoost: voiceSettings?.similarityBoost || 0.75,
+                style: voiceSettings?.style || 0.9,
+                useSpeakerBoost: voiceSettings?.useSpeakerBoost || true
             }
         });
 
