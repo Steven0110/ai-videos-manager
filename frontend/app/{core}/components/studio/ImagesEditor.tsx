@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Textarea } from "@heroui/input";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Button } from "@heroui/button";
-import { PhotoIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import { PhotoIcon, ArrowPathIcon, DocumentDuplicateIcon } from "@heroicons/react/24/solid";
 import ReactImageGallery from "react-image-gallery";
 import api from "@/{core}/utils/api";
 import "react-image-gallery/styles/css/image-gallery.css";
@@ -199,6 +199,23 @@ export default function ImagesEditor({ projectId, scenes: initialScenes }: Image
         }
     };
 
+    const copyVideoPrompt = (prompt: string) => {
+        navigator.clipboard.writeText(prompt).then(() => {
+            addToast({
+                title: "Copiado",
+                description: "Prompt de video copiado al portapapeles",
+                color: "success",
+            });
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+            addToast({
+                title: "Error",
+                description: "No se pudo copiar el prompt al portapapeles",
+                color: "danger",
+            });
+        });
+    };
+
     // Check if there are any pending scenes that can be generated
     const hasPendingScenesForGeneration = scenes.some(scene => scene.imageGenerationStatus === 'pending');
 
@@ -235,6 +252,25 @@ export default function ImagesEditor({ projectId, scenes: initialScenes }: Image
                                         setScenes(updatedScenes);
                                     }}
                                 />
+                                <div className="relative">
+                                    <Textarea
+                                        label="Prompt de video relacionado"
+                                        placeholder="Prompt del video relacionado a esta imagen"
+                                        isReadOnly
+                                        value={scenes[index].videoPrompt || ""}
+                                    />
+                                    {scenes[index].videoPrompt && (
+                                        <Button 
+                                            isIconOnly
+                                            size="sm"
+                                            variant="ghost"
+                                            className="absolute top-0 right-0 mt-1 mr-1"
+                                            onPress={() => copyVideoPrompt(scenes[index].videoPrompt || "")}
+                                        >
+                                            <DocumentDuplicateIcon className="w-4 h-4" />
+                                        </Button>
+                                    )}
+                                </div>
                                 <div className="flex flex-row gap-4">
 
                                     {scenes[index].imageGenerationStatus === 'pending' &&
