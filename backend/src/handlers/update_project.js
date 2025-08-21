@@ -40,7 +40,8 @@ module.exports.handler = async (event, context) => {
                 'facebookDescription',
                 'instagramDescription',
                 'tiktokDescription',
-                'youtubeDescription'
+                'youtubeDescription',
+                'isPublished'
             ];
             
             for (const field of allowedFields) {

@@ -14,4 +14,8 @@ export const downloadProject = async (projectId: string): Promise<string> => {
   return response.data.zipUrl;
 };
 
+export const publishProject = async (projectId: string): Promise<void> => {
+  await api.put(`/project/${projectId}`, { isPublished: true });
+};
+
 export default api; 

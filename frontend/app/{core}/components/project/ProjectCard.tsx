@@ -108,6 +108,15 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <div className="mt-3 flex flex-wrap gap-2">
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs ${
+              project.isPublished
+                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+            }`}
+          >
+            {project.isPublished ? 'Publicado' : 'Borrador'}
+          </span>
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs ${
               isAudioGenerated
                 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                 : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'

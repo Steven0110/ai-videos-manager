@@ -8,8 +8,9 @@ import { Project } from '../{core}/utils/types';
 import { Input, Textarea } from '@heroui/input';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { Button } from '@heroui/button';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/modal';
 import { addToast } from '@heroui/toast';
-import api from '@/{core}/utils/api';
+import api, { publishProject } from '@/{core}/utils/api';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ContentEditor from '@/{core}/components/studio/ContentEditor';
 import { downloadProject } from '@/{core}/utils/api';
@@ -19,6 +20,8 @@ export default function ProjectStudio() {
   const { studioProject, setStudioProject } = useProjects();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [localProject, setLocalProject] = useState<Project>({
     title: '',
     description: '',
@@ -83,6 +86,30 @@ export default function ProjectStudio() {
     }
   }
 
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    try {
+      await publishProject(studioProject?._id || '');
+      addToast({
+        title: 'Proyecto publicado',
+        description: 'El proyecto ha sido publicado correctamente',
+        color: 'success',
+      });
+      setLocalProject({ ...localProject, isPublished: true });
+      setStudioProject({ ...localProject, isPublished: true });
+    } catch (error) {
+      console.error('Error publishing project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Error al publicar el proyecto',
+        color: 'danger',
+      });
+    } finally {
+      setIsPublishing(false);
+      onClose();
+    }
+  };
+
 
   useEffect(() => {
     if (studioProject) {
@@ -114,15 +141,26 @@ export default function ProjectStudio() {
             <CardBody>
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-medium mb-2">Detalles del proyecto</h2>
-                <Button 
-                  variant="flat" 
-                  color="primary" 
-                  onPress={handleDownload}
-                  isLoading={isDownloading}
-                  endContent={<ArrowDownTrayIcon className="w-5 h-5" />}
+                <div className="flex gap-2">
+                  <Button 
+                    variant="flat" 
+                    color="default" 
+                    onPress={onOpen}
+                    isLoading={isPublishing}
+                    isDisabled={Boolean(localProject.isPublished)}
                   >
-                  Descargar
-                </Button>
+                    Publicar
+                  </Button>
+                  <Button 
+                    variant="flat" 
+                    color="primary" 
+                    onPress={handleDownload}
+                    isLoading={isDownloading}
+                    endContent={<ArrowDownTrayIcon className="w-5 h-5" />}
+                    >
+                    Descargar
+                  </Button>
+                </div>
               </div>
               
               <Input 
@@ -174,6 +212,22 @@ export default function ProjectStudio() {
           />
         </div>
       </div>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <div>
+              <ModalHeader>Publicar proyecto</ModalHeader>
+              <ModalBody>
+                <p>¿Deseas publicar este proyecto? Podrás revertirlo editando el proyecto.</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button onPress={onClose} variant="light">Cancelar</Button>
+                <Button color="primary" isLoading={isPublishing} onPress={handlePublish}>Publicar</Button>
+              </ModalFooter>
+            </div>
+          )}
+        </ModalContent>
+      </Modal>
     </AppLayout>
   );
 } 

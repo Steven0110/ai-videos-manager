@@ -48,6 +48,7 @@ const getProjectById = async (db, projectId) => {
                 tiktokDescription: { $first: '$tiktokDescription' },
                 youtubeDescription: { $first: '$youtubeDescription' },
                 scenes: { $push: '$scene' },
+                isPublished: { $first: '$isPublished' },
                 createdAt: { $first: '$createdAt' },
                 updatedAt: { $first: '$updatedAt' },
             }}
@@ -108,6 +109,7 @@ const getAllProjects = async (db) => {
                 instagramDescription: { $first: '$instagramDescription' },
                 tiktokDescription: { $first: '$tiktokDescription' },
                 youtubeDescription: { $first: '$youtubeDescription' },
+                isPublished: { $first: '$isPublished' },
                 createdAt: { $first: '$createdAt' },
                 updatedAt: { $first: '$updatedAt' },
             }},

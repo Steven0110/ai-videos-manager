@@ -53,4 +53,5 @@ export interface Project {
   scenes: Scene[];
   createdAt?: string;
   updatedAt?: string;
+  isPublished?: boolean;
 } 
