@@ -14,6 +14,17 @@ const s3Client = new S3Client({ region: 'us-west-2' });
 const BUCKET_NAME = 'steven-aivideos';
 const pipeline = promisify(stream.pipeline);
 
+function slugifyProjectName(name) {
+    return String(name || 'project')
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        .slice(0, 80);
+}
+
 module.exports.handler = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
     
@@ -81,9 +92,9 @@ module.exports.handler = async (event, context) => {
         // Generate zip buffer
         const zipBuffer = zip.toBuffer();
         
-        // Generate a unique filename for the zip file
-        const timestamp = new Date().getTime();
-        const filename = `${projectId}_${timestamp}.zip`;
+        // Generate filename using project title for readability
+        const projectSlug = slugifyProjectName(project.title);
+        const filename = `${projectId}_${projectSlug}.zip`;
         
         // Check if there's an existing zip file for this project and delete it
         try {
