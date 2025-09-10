@@ -94,7 +94,7 @@ module.exports.handler = async (event, context) => {
         
         // Generate filename using project title for readability
         const projectSlug = slugifyProjectName(project.title);
-        const filename = `${projectId}_${projectSlug}.zip`;
+        const filename = `${projectSlug}.zip`;
         
         // Check if there's an existing zip file for this project and delete it
         try {
