@@ -41,13 +41,13 @@ module.exports.handler = async (event, context) => {
         console.log('voiceSettings received', voiceSettings);
         const audio = await elevenLabs.textToSpeech.convert("kcQkGnn0HAT2JRDQ4Ljp", {
             text: script,
-            modelId: "eleven_multilingual_v2",
+            modelId: "eleven_v3",
             voiceSettings: {
                 speed: voiceSettings?.speed || 0.75,
-                stability: voiceSettings?.stability || 0.3,
+                stability: voiceSettings?.stability || 0.5,
                 similarityBoost: voiceSettings?.similarityBoost || 0.75,
                 style: voiceSettings?.style || 0.9,
-                useSpeakerBoost: voiceSettings?.useSpeakerBoost || true
+                useSpeakerBoost: voiceSettings?.useSpeakerBoost || true,
             }
         });
 
